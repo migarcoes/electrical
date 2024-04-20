@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voltage Drop Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        form {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+        }
+        button[type="button"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        button[type="button"]:hover {
+            background-color: #3e8e41;
+        }
+        #result {
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .wire-type {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Voltage Drop Calculator</h1>
+    <form>
+        <label for="current">Current (Amps):</label>
+        <input type="number" id="current" placeholder="Enter current in amps" required>
+        <br>
+        <label for="distance">Distance (Feet):</label>
+        <input type="number" id="distance" placeholder="Enter distance in feet" required>
+        <br>
+        <label for="awg">AWG Wire Size:</label>
+        <select id="awg">
+            <option value="18"> #18 </option>
+            <option value="16"> #16 </option>
+            <option value="14"> #14 </option>
+            <option value="12"> #12 </option>
+            <option value="10"> #10 </option>
+            <option value="8"> #8 </option>
+            <option value="6"> #6 </option>
+            <option value="4"> #4 </option>
+            <option value="3"> #3 </option>
+            <option value="2"> #2 </option>
+            <option value="1"> #1 </option>
+            <option value="1/0"> 1/0 </option>
+            <option value="2/0"> 2/0 </option>
+            <option value="3/0"> 3/0 </option>
+            <option value="4/0"> 4/0 </option>
+        </select>
+        <br>
+        <label for="material">Wire Material:</label>
+        <select id="material">
+            <option value="copper">Copper</option>
+            <option value="aluminum">Aluminum</option>
+        </select>
+        <br>
+        <button type="button" onclick="calculateVoltageDrop()">Calculate Voltage Drop</button>
+    </form>
+    <div id="result"></div>
+    <script>
+        function calculateVoltageDrop() {
+            const current = parseFloat(document.getElementById('current').value);
+            const distance = parseFloat(document.getElementById('distance').value);
+            const awg = document.getElementById('awg').value;
+            const material = document.getElementById('material').value;
+            let K;
+            let materialText;
+            if (material === "copper") {
+                K = 12.9; // resistivity constant for copper in ohm-circular mils per foot
+                materialText = "Copper";
+            } else {
+                K = 21.2; // resistivity constant for aluminum in ohm-circular mils per foot
+                materialText = "Aluminum";
+            }
+            let cmil;
+            switch (awg) {
+                case "18":
+                    cmil = 1620;
+                    break;
+                case "16":
+                    cmil = 2580;
+                    break;
+                case "14":
+                    cmil = 4110;
+                    break;
+                case "12":
+                    cmil = 6530;
+                    break;
+                case "10":
+                    cmil = 10380;
+                    break;
+                case "8":
+                    cmil = 16510;
+                    break;
+                case "6":
+                    cmil = 26370;
+                    break;
+                case "4":
+                    cmil = 41740;
+                    break;
+                case "3":
+                    cmil = 52740;
+                    break;
+                case "2":
+                    cmil = 66370;
+                    break;
+                case "1":
+                    cmil = 83690;
+                    break;
+                case "1/0":
+                    cmil = 105600;
+                    break;
+                case "2/0":
+                    cmil = 133100;
+                    break;
+                case "3/0":
+                    cmil = 167800;
+                    break;
+                case "4/0":
+                    cmil = 211600;
+                    break;
+                default:
+                    cmil = 4110; // default to #14 if invalid selection
+                    break;
+            }
+            const voltageDrop = (2 * K * current * distance) / cmil; // Formula for voltage drop in volts
+            const substitutionText = `Voltage Drop: (2 * ${K} * ${current} * ${distance}) / ${cmil}`;
+            document.getElementById('result').innerHTML = `${substitutionText}<br>Result: ${voltageDrop.toFixed(2)} volts for ${awg} ${materialText} wire`;
+        }
+    </script>
+</body>
+</html>
